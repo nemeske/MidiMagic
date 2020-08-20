@@ -1,6 +1,9 @@
 class SceneBase(object):
-    def __init__(self):
+    def __init__(self, width, length):
         self.next = self
+        self.quit_flag = False
+        self.width = width
+        self.length = length
 
     def on_switchto(self):
         raise NotImplementedError("on_switchto abstract method must be defined in subclass.")
@@ -16,7 +19,8 @@ class SceneBase(object):
 
     def on_switchto_scene(self, next_scene):
         self.next = next_scene
-        next_scene.onswitchto()
+        if next_scene is not None:
+            next_scene.on_switchto()
 
     def on_terminate(self):
         self.on_switchto_scene(None)

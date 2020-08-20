@@ -42,51 +42,7 @@ def run_game(width, height, fps, starting_scene):
 
 
 if __name__ == "__main__":
-    run_game(400, 300, 60, TitleScene())
-
-    # pygame.init()
-    # pygame.midi.init()
-    # i = 0
-    # good_list = []
-    # chosen = 0
-    # while True:
-    #     info = pygame.midi.get_device_info(i)
-    #     if info == None:
-    #         break
-    #     if info[2] == 0:  # not an input device
-    #         i += 1
-    #         continue
-    #     print("device: %d" % i, info)
-    #     good_list.append(i)
-    #     i += 1
-    # if len(good_list) == 0:
-    #     print('No MIDI devices found')
-    #     #self.director.change_scene(None, [])
-    #     # TODO: break here
-    # elif len(good_list) == 1:
-    #     print('connecting to device %d ...' % (good_list[0]))
-    #     chosen = 0
-    # else:
-    #     print('Too many MIDI devices found, choosing MIDI 0')
-    #     chosen = 0
-    # midi = pygame.midi.Input(good_list[chosen])
-
-
-    # while True:
-    #     poll = midi.poll()
-    #     if poll == True:
-    #         print('Polled')
-    #         while True:
-    #             data = midi.read(1)
-    #             if len(data) == 0:
-    #                 break
-    #             (type, note, vel, stuff) = data[0][0]
-    #             print('Read note')
-    #             print(type)
-    #             print(note)
-    #             print(vel)
-    #             print(stuff)
-
-    # Closing midi
-    # print('Closing MIDI')
-    # midi.close()
+    width = 640
+    length = 480
+    fps = 60
+    run_game(width, length, fps, TitleScene(width, length))
