@@ -10,11 +10,7 @@ class Shape(object):
         self.state = 'alive'
 
     def update(self):
-        self.pos[0] += self.velocity[0]
-        self.pos[1] += self.velocity[1]
-        if self.pos[0] > self.parent.width or self.pos[1] > self.parent.length \
-                or self.pos[0] < 0 or self.pos[1] < 0:
-            self.state = 'dead'
+        raise NotImplementedError("update abstract method must be defined in subclass.")
 
     def draw(self):
         raise NotImplementedError("draw abstract method must be defined in subclass.")
@@ -26,6 +22,37 @@ class Circle(Shape):
         self.radius = radius
         self.width = width
 
+    def update(self):
+        self.pos[0] += self.velocity[0]
+        self.pos[1] += self.velocity[1]
+        if self.pos[0] > self.parent.width or self.pos[1] > self.parent.length \
+                or self.pos[0] < 0 or self.pos[1] < 0:
+            self.state = 'dead'
+
     def draw(self, surface):
         if self.state == 'alive':
             pygame.draw.circle(surface, self.colour, (int(self.pos[0]), int(self.pos[1])), self.radius, self.width)
+
+
+class Rectangle(Shape):
+    def __init__(self, parent, pos, colour, velocity, height=0, width=0, thickness=4):
+        super().__init__(parent, pos, colour, velocity)
+        self.height = height
+        self.width = width
+        self.thickness = thickness
+
+    def update(self):
+        self.pos[0] -= self.velocity[0]
+        self.pos[1] -= self.velocity[1]
+        self.height += self.velocity[0]
+        self.width += self.velocity[1]
+        if self.pos[0] + self.height > self.parent.width \
+                or self.pos[1] + self.width > self.parent.length \
+                or self.pos[0] < 0 or self.pos[1] < 0:
+            self.state = 'dead'
+
+    def draw(self, surface):
+        if self.state == 'alive':
+            pygame.draw.rect(surface, self.colour, pygame.Rect(int(self.pos[0]), int(self.pos[1]),
+                                                               int(self.width), int(self.height)), self.thickness)
+

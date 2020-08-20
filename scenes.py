@@ -35,8 +35,32 @@ class GameScene(SceneBase):
         self.bg_s = 1.0
         self.bg_v = 1.0
 
-    def on_switchto(self):
+    def add_circle(self, note, vel):
+        pos = [random.randint(0, self.width), random.randint(0, self.length)]
+        min_note = 36
+        max_note = 84
+        min_vel = 0.5
+        max_vel = 9
+        v1 = vel / 128 * max_vel + min_vel
+        v2 = v1 * random.random()
+        c = int((note - min_note) * (255 / (max_note - min_note)))
+        colour = tuple(round(i * 255) for i in colorsys.hsv_to_rgb(c / 255, v1 / (max_vel + min_vel),
+                                                                   v2 / (max_vel + min_vel)))
+        # colour = (c, 0, 0)
+        if random.random() < 0.5:
+            v1 *= -1
+        if random.random() < 0.5:
+            v2 *= -1
+        radius = 100
+        width = 0
+        if note % 4 == 0:
+            width = 4
+        self.shapes.append(Circle(self, pos, colour, [v1, v2], radius, width))
 
+    def add_rect(self, note, vel):
+        pass
+
+    def on_switchto(self):
         self.shapes = []
         # Initializing the midi controller
         pygame.midi.init()
@@ -92,6 +116,7 @@ class GameScene(SceneBase):
                 print('-----')
                 self.note = note
                 self.vel = vel
+
                 # the bg colour can be changed with the potmeters
                 if type == 176:
                     # leftmost
@@ -101,29 +126,13 @@ class GameScene(SceneBase):
                         self.bg_s = vel / 127.0
                     if note == 22:
                         self.bg_v = vel / 127.0
+                # drumpad creates rectangles
+                if type == 153:
+                    self.add_rect(note, vel)
 
                 # only if a key was pressed and not EOM
                 if vel > 0 and type == 146:
-                    pos = [random.randint(0, self.width), random.randint(0, self.length)]
-                    min_note = 36
-                    max_note = 84
-                    min_vel = 0.5
-                    max_vel = 9
-                    v1 = vel / 128 * max_vel + min_vel
-                    v2 = v1 * random.random()
-                    c = int((note - min_note) * (255 / (max_note - min_note)))
-                    colour = tuple(round(i * 255) for i in colorsys.hsv_to_rgb(c/255, v1 / (max_vel + min_vel),
-                                                                               v2 / (max_vel + min_vel)))
-                    # colour = (c, 0, 0)
-                    if random.random() < 0.5:
-                        v1 *= -1
-                    if random.random() < 0.5:
-                        v2 *= -1
-                    radius = 60
-                    width = 0
-                    if note % 4 == 0:
-                        width = 4
-                    self.shapes.append(Circle(self, pos, colour, [v1, v2], radius, width))
+                    self.add_circle(note, vel)
 
     def on_event(self, events):
         pass
