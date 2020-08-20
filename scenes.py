@@ -1,6 +1,8 @@
 from scenebase import *
 from shapes import *
 import pygame
+import random
+import colorsys
 
 
 class TitleScene(SceneBase):
@@ -21,16 +23,17 @@ class TitleScene(SceneBase):
 
     def on_draw(self, screen):
         # todo: here comes the fancy logo
-        screen.fill((255, 0, 0))
-
-
-SHAPE_SPEED = [1.0, 1.0]
+        screen.fill((255, 255, 0))
 
 
 class GameScene(SceneBase):
     def __init__(self, width, length):
         super().__init__(width, length)
         self.note = -1
+        self.vel = -1
+        self.bg_h = 1.0
+        self.bg_s = 1.0
+        self.bg_v = 1.0
 
     def on_switchto(self):
 
@@ -84,22 +87,56 @@ class GameScene(SceneBase):
                 if len(data) == 0:
                     break
                 (type, note, vel, stuff) = data[0][0]
+                print(type)
+                print(stuff)
+                print('-----')
                 self.note = note
-                if vel > 0:
-                    pos = [0, 0]
-                    colour = (note, 0, 0)
-                    radius = 100
-                    self.shapes.append(Circle(self, pos, colour, SHAPE_SPEED, radius))
+                self.vel = vel
+                # the bg colour can be changed with the potmeters
+                if type == 176:
+                    # leftmost
+                    if note == 20:
+                        self.bg_h = vel / 127.0
+                    if note == 21:
+                        self.bg_s = vel / 127.0
+                    if note == 22:
+                        self.bg_v = vel / 127.0
+
+                # only if a key was pressed and not EOM
+                if vel > 0 and type == 146:
+                    pos = [random.randint(0, self.width), random.randint(0, self.length)]
+                    min_note = 36
+                    max_note = 84
+                    min_vel = 0.5
+                    max_vel = 9
+                    v1 = vel / 128 * max_vel + min_vel
+                    v2 = v1 * random.random()
+                    c = int((note - min_note) * (255 / (max_note - min_note)))
+                    colour = tuple(round(i * 255) for i in colorsys.hsv_to_rgb(c/255, v1 / (max_vel + min_vel),
+                                                                               v2 / (max_vel + min_vel)))
+                    # colour = (c, 0, 0)
+                    if random.random() < 0.5:
+                        v1 *= -1
+                    if random.random() < 0.5:
+                        v2 *= -1
+                    radius = 60
+                    width = 0
+                    if note % 4 == 0:
+                        width = 4
+                    self.shapes.append(Circle(self, pos, colour, [v1, v2], radius, width))
 
     def on_event(self, events):
         pass
 
     def on_draw(self, screen):
-        # todo: here comes prety much a lot of thing
-        screen.fill((255, 255, 0))
+        bg_colour = tuple(round(i * 255) for i in colorsys.hsv_to_rgb(self.bg_h, self.bg_s, self.bg_v))
+        screen.fill(bg_colour)
 
-        text = self.font.render(str(self.note), True, (0, 128, 0))
-        screen.blit(text, (self.width / 2 - text.get_width() / 2, self.length / 2 - text.get_height() / 2))
+        note_str = self.font.render(str(self.note), True, (0, 128, 0))
+        screen.blit(note_str, (self.width / 2 - note_str.get_width() / 2, self.length / 2 - note_str.get_height() / 2))
+        vel_str = self.font.render(str(self.vel), True, (0, 128, 0))
+        screen.blit(vel_str, (self.width / 2 - vel_str.get_width() / 2,
+                              self.length / 2 - vel_str.get_height() / 2 + note_str.get_height()))
 
         for s in self.shapes:
             s.draw(screen)

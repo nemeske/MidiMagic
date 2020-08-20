@@ -5,6 +5,7 @@ from scenes import *
 
 def run_game(width, height, fps, starting_scene):
     pygame.init()
+    pygame.display.set_caption('MidiMagic')
     screen = pygame.display.set_mode((width, height))
     clock = pygame.time.Clock()
 
@@ -42,7 +43,7 @@ def run_game(width, height, fps, starting_scene):
 
 
 if __name__ == "__main__":
-    width = 640
-    length = 480
+    width = 1024
+    length = 768
     fps = 60
     run_game(width, length, fps, TitleScene(width, length))
