@@ -41,7 +41,7 @@ class GameScene(SceneBase):
         max_note = 84
         min_vel = 0.5
         max_vel = 9
-        v1 = vel / 128 * max_vel + min_vel
+        v1 = vel / 127 * max_vel + min_vel
         v2 = v1 * random.random()
         c = int((note - min_note) * (255 / (max_note - min_note)))
         colour = tuple(round(i * 255) for i in colorsys.hsv_to_rgb(c / 255, v1 / (max_vel + min_vel),
@@ -58,7 +58,18 @@ class GameScene(SceneBase):
         self.shapes.append(Circle(self, pos, colour, [v1, v2], radius, width))
 
     def add_rect(self, note, vel):
-        pass
+        pos = [random.randint(int(self.width / 3), int(self.width * 2.0/3.0)),
+               random.randint(int(self.length / 3), int(self.length * 2.0/3.0))]
+        min_vel = 1.5
+        max_vel = 9
+        v1 = vel / 127 * max_vel + min_vel
+        v2 = v1
+        min_note = 36
+        max_note = 49
+        c = int((note - min_note) * (255 / (max_note - min_note)))
+        colour = tuple(round(i * 255) for i in colorsys.hsv_to_rgb(c / 255, random.uniform(0.5, 1.0),
+                                                                   random.uniform(0.5, 1.0)))
+        self.shapes.append(Rectangle(self, pos, colour, [v1, v2]))
 
     def on_switchto(self):
         self.shapes = []

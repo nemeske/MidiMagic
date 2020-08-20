@@ -44,8 +44,8 @@ class Rectangle(Shape):
     def update(self):
         self.pos[0] -= self.velocity[0]
         self.pos[1] -= self.velocity[1]
-        self.height += self.velocity[0]
-        self.width += self.velocity[1]
+        self.height += 2*self.velocity[0]
+        self.width += 2*self.velocity[1]
         if self.pos[0] + self.height > self.parent.width \
                 or self.pos[1] + self.width > self.parent.length \
                 or self.pos[0] < 0 or self.pos[1] < 0:
